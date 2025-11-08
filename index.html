@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorsolás</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div>
+        <label>Box 1 Range (from-to):<br>
+            <input type="text" id="rangeBox1" value="1-100">
+        </label><br><br>
+        <label>Box 2 Range (from-to):<br>
+            <input type="text" id="rangeBox2" value="1-100">
+        </label>
+    </div>
+    <br>
+    <div class="numbers-container">
+        <span id="box1"></span>
+        <span id="box2"></span>
+    </div>
+
+    <br>
+    <button id="stopBtn">Stop</button>
+    <script>
+        function parseRange(rangeStr) {
+            const m = rangeStr.match(/^\s*(\d+)\s*-\s*(\d+)\s*$/);
+            if (!m) return [];
+            const from = parseInt(m[1], 10);
+            const to = parseInt(m[2], 10);
+            if (from > to) return [];
+            return Array.from({ length: to - from + 1 }, (_, i) => (from + i).toString());
+        }
+
+        let params1 = parseRange(document.getElementById('rangeBox1').value);
+        let params2 = parseRange(document.getElementById('rangeBox2').value);
+        let index1 = 0, index2 = 0;
+        let interval1, interval2;
+        let spinning1 = false, spinning2 = false;
+        const box1 = document.getElementById('box1');
+        const box2 = document.getElementById('box2');
+        const stopBtn = document.getElementById('stopBtn');
+        const input1 = document.getElementById('rangeBox1');
+        const input2 = document.getElementById('rangeBox2');
+
+        function readInputs() {
+            params1 = parseRange(input1.value);
+            params2 = parseRange(input2.value);
+            index1 = 0;
+            index2 = 0;
+            box1.textContent = params1.length ? params1[index1] : '';
+            box2.textContent = params2.length ? params2[index2] : '';
+        }
+
+        function startSpinning() {
+            readInputs();
+            spinning1 = true;
+            spinning2 = true;
+            interval1 = setInterval(() => {
+                if (params1.length) {
+                    index1 = (index1 + 1) % params1.length;
+                    box1.textContent = params1[index1];
+                }
+            }, 60);
+            interval2 = setInterval(() => {
+                if (params2.length) {
+                    index2 = (index2 + 1) % params2.length;
+                    box2.textContent = params2[index2];
+                }
+            }, 200);
+        }
+
+        stopBtn.addEventListener('click', () => {
+            if (spinning1 || spinning2) {
+                clearInterval(interval1);
+                clearInterval(interval2);
+                spinning1 = false;
+                spinning2 = false;
+                stopBtn.textContent = "Start Again";
+            } else {
+                stopBtn.textContent = "Stop";
+                startSpinning();
+            }
+        });
+
+        input1.addEventListener('change', readInputs);
+        input2.addEventListener('change', readInputs);
+
+        readInputs();
+        startSpinning();
+    </script>
+</body>
+
+</html>
