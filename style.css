@@ -44,8 +44,7 @@ input[type="text"]:focus {
     align-items: center;
 }
 
-#box1,
-#box2 {
+#box {
     background: linear-gradient(145deg, #3a3a3a, #222);
     border-radius: 15px;
     width: 300px;
